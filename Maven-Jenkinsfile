@@ -5,6 +5,6 @@ pipeline
     stages
     {
         stage ('scm checkout or download the code')
-        { steps { git 'https://github.com/Ayushi26Bhagat/maven-project' } }
+        { steps { git branch: 'master', url: 'https://github.com/Ayushi26Bhagat/maven-project/' } }
     }
 }
