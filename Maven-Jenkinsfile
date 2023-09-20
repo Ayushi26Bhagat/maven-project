@@ -8,8 +8,8 @@ pipeline
         { steps { git 'https://github.com/Ayushi26Bhagat/maven-project' } }
 
         stage ('complie the code')
-        { steps { withMaven(globalMavenSettingsConfig: '', jdk: 'LocalJDK', maven: 'LocalMaven', mavenSettingsConfig: '', traceability: true) {
-           sh 'mvn complie'
+        { steps { withMaven(globalMavenSettingsConfig: '7838d68c-3f43-4ce3-9245-9091c0a35d0c', jdk: 'LocalJDK', maven: 'LocalMaven', mavenSettingsConfig: '3682d626-cdc8-4736-807e-ef0078fad453', traceability: true) {
+            sh 'mvn complie'
 }
      }}
     }
