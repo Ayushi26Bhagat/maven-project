@@ -12,5 +12,15 @@ pipeline
             sh 'mvn compile'
 }
      }}
+
+       stage ('generate deployable package')
+       {steps {withMaven(globalMavenSettingsConfig: '7838d68c-3f43-4ce3-9245-9091c0a35d0c', jdk: 'LocalJDK', maven: 'LocalMaven', mavenSettingsConfig: '3682d626-cdc8-4736-807e-ef0078fad453', traceability: true) {
+           sh 'mvn package'
+}    }}
+
+       stage ('maven install goal')
+       {steps { withMaven(globalMavenSettingsConfig: '7838d68c-3f43-4ce3-9245-9091c0a35d0c', jdk: 'LocalJDK', maven: 'LocalMaven', mavenSettingsConfig: '3682d626-cdc8-4736-807e-ef0078fad453', traceability: true) {
+            sh 'mvn install'
+}     }}
     }
 }
