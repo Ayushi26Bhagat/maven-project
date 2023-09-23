@@ -1,0 +1,22 @@
+pipeline
+
+{
+    agent any
+    stages
+    { 
+        stage ( 'scm checkout' )
+        {steps {git branch: 'master', url: 'https://github.com/Ayushi26Bhagat/maven-project' } }
+
+        stage ( 'unit test execution' )
+        {steps {withMaven(globalMavenSettingsConfig: '', jdk: 'LocalJDK', maven: 'LocalMaven', mavenSettingsConfig: '', traceability: true) {
+            sh 'mvn test'}
+        
+        } }
+
+        stage ( 'sonar analysis and build' )
+        {steps {withMaven(globalMavenSettingsConfig: '', jdk: 'LocalJDK', maven: 'LocalMaven', mavenSettingsConfig: '', traceability: true) {
+            sh 'mvn package'}
+        
+        } }
+    }
+}
