@@ -1,26 +1,34 @@
 pipeline
 
 {
-    agent any
-    stages
-    { 
-        stage ( 'scm checkout' )
-        {steps {git branch: 'master', url: 'https://github.com/Ayushi26Bhagat/maven-project' } }
+agent any
+stages
+{ 
+ 
+ stage('scm checkout')
+ { steps { git branch: 'master', url: 'https://github.com/prakashk0301/maven-project.git' } }
 
-        stage ( 'unit test execution' )
-        {steps {withMaven(globalMavenSettingsConfig: '', jdk: 'LocalJDK', maven: 'LocalMaven', mavenSettingsConfig: '', traceability: true) {
-            sh 'mvn test'}
-        
-        } }
 
-        stage ('create package & sonar analysis')
-        { steps { withMaven(jdk: 'JAVA_HOME', maven: 'MAVEN_HOME') 
+ stage ('run unit test framework')
+ { steps { withMaven(jdk: 'JAVA_HOME', maven: 'MAVEN_HOME') 
+   {
+    sh 'mvn test'
+    }
+ } }
+
+
+  stage ('create package & sonar analysis')
+ { steps { withMaven(jdk: 'JAVA_HOME', maven: 'MAVEN_HOME') 
    {
      withSonarQubeEnv(credentialsId: 'sonar', installationName: 'sonar')
      {
          sh 'mvn package sonar:sonar'
      }
  } }}
+
+
+}
+}
 
 
     }
