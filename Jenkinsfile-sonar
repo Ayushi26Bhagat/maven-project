@@ -1,29 +1,37 @@
 pipeline
+{agent any
+stages
+{ 
+ stage ('scm checkout')
+ {steps { git branch: 'master', url: 'https://github.com/Ayushi26Bhagat/maven-project' }}
 
-{
-    agent any
-    stages
-    { 
-        stage ( 'scm checkout' )
-        {steps {git branch: 'master', url: 'https://github.com/Ayushi26Bhagat/maven-project' } }
+ stage ('unit test execution')
+ {steps { withMaven(globalMavenSettingsConfig: '7838d68c-3f43-4ce3-9245-9091c0a35d0c', jdk: 'LocalJDK', maven: 'LocalMVN', mavenSettingsConfig: '3682d626-cdc8-4736-807e-ef0078fad453', traceability: true) 
+  {sh 'mvn test'} 
+}}
 
-        stage ( 'unit test execution' )
-        {steps {withMaven(globalMavenSettingsConfig: '', jdk: 'LocalJDK', maven: 'LocalMaven', mavenSettingsConfig: '', traceability: true) {
-            sh 'mvn test'}
-        
-        } }
+ stage ('sonar analysis and build')
+{steps
+  { withSonarQubeEnv(credentialsId: 'sonar', installationName: 'sonar' )
+   { withMaven(globalMavenSettingsConfig: '7838d68c-3f43-4ce3-9245-9091c0a35d0c', jdk: 'LocalJDK', maven: 'LocalMVN', mavenSettingsConfig: '3682d626-cdc8-4736-807e-ef0078fad453', traceability: true)
 
-        stage ('create package & sonar analysis')
-        { steps { withMaven(jdk: 'JAVA_HOME', maven: 'MAVEN_HOME') 
-   {
-     withSonarQubeEnv(credentialsId: 'sonar', installationName: 'sonar')
-     {
-         sh 'mvn package sonar:sonar'
+  {sh 'mvn package sonar:sonar'}
+
+}} }
+
+stage('Quality Gate Status')
+{ steps {
+  timeout(time: 1, unit: 'HOURS') 
+  {
+    def qg = waitForQualityGate()
+    if (qg.status != 'OK') 
+    {
+      error "Pipeline aborted due to quality gate failure: ${qg.status}"
      }
- } }}
-
-
-    }
+     }
+   }
 }
-    
 
+
+}
+}
